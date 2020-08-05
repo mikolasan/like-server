@@ -7,8 +7,8 @@ import time
 import pymongo
 from pymongo import ReturnDocument
 
-hostName = "localhost"
-serverPort = 80
+hostName = ""
+serverPort = 10000
 
 db_user = os.environ.get("DB_USER")
 db_pass = os.environ.get("DB_PASSWORD")

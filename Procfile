@@ -1,1 +1,1 @@
-worker: python like-server.py
+web: python like-server.py
