@@ -21,6 +21,13 @@ votes_cache = {}
 # https://pythonbasics.org/webserver/
 # https://gist.github.com/roughy/157036bed7d4ead34113
 
+
+def trim_ending_slash(url):
+    if len(url) > 0 and url[-1] == '/':
+        return url[:-1]
+    return url
+
+
 class LikeServer(BaseHTTPRequestHandler):
     def do_GET(self):
         origin = self.headers.get('origin')
@@ -34,7 +41,7 @@ class LikeServer(BaseHTTPRequestHandler):
         u = urlparse(self.path)
         if u.path == "/likes":
             query_components = parse_qs(u.query)
-            url = query_components["url"][0]
+            url = trim_ending_slash(query_components["url"][0])
             cursor = votes.find({ "path": url })
             scores = {x['vote']: x['score'] for x in cursor.clone()}
             if len(scores) > 0:
@@ -64,7 +71,7 @@ class LikeServer(BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             body = self.rfile.read(content_length)
             data = json.loads(body.decode('utf8'))
-            print(data['url'], data['like'])
+            #print(data['url'], data['like'])
             url = data['url']
             vote_name = str(data['like'])
             score = 0
