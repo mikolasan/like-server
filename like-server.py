@@ -37,6 +37,8 @@ class LikeServer(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Methods", "GET, POST")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
+        
+        response = {}
         # path vote score
         u = urlparse(self.path)
         if u.path == "/likes":
@@ -48,11 +50,10 @@ class LikeServer(BaseHTTPRequestHandler):
                 global votes_cache
                 if url not in votes_cache:
                     votes_cache[url] = {x['vote']: x['_id'] for x in cursor.clone()}
-                #send response:
-                self.wfile.write(json.dumps({
+                response = {
                     "scores": scores
-                }).encode('utf8'))
-            
+                }
+            self.wfile.write(json.dumps(response).encode('utf8'))
         elif u.path == "/like":
             pass
         else:
