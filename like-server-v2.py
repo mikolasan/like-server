@@ -3,6 +3,8 @@ import pymongo
 from pymongo import ReturnDocument
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
 
 votes = None
 votes_cache = {}
@@ -60,9 +62,15 @@ def read_likes(url: str):
     return {}
 
 
-@app.post("/like/", status_code=201)
-def like_url(url: str, like: str):
-    vote_name = like
+class Like(BaseModel):
+    url: str
+    like: str
+
+
+@app.post("/like", status_code=201)
+def like_url(body: Like):
+    url = body.url
+    vote_name = body.like
     score = 0
     global votes_cache
     if url not in votes_cache:

@@ -13,6 +13,14 @@ $Env:DB_NAME = "db"
 
 ## Run server
 
+v2
+
+```
+uvicorn like-server-v2:app --reload
+```
+
+v1
+
 ```
 python3 like-server.py
 ```
