@@ -1,13 +1,8 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
-from urllib.parse import urlparse, parse_qs
-from io import BytesIO
-import json
 import os
-import time
 import pymongo
 from pymongo import ReturnDocument
 from fastapi import FastAPI
-
+from fastapi.middleware.cors import CORSMiddleware
 
 votes = None
 votes_cache = {}
@@ -17,7 +12,7 @@ def connect_to_db():
     db_user = os.environ.get("DB_USER")
     db_pass = os.environ.get("DB_PASSWORD")
     db_name = os.environ.get("DB_NAME")
-    print("Connecting to DB...", db_user, db_pass, db_name)
+    print("Connecting to DB...")
     client = pymongo.MongoClient(f"mongodb+srv://{db_user}:{db_pass}@mikolasanwebsite.afnov.mongodb.net/{db_name}?retryWrites=true&w=majority")
     db = client[db_name]
     print("Getting 'votes'")
@@ -33,6 +28,19 @@ def trim_ending_slash(url):
 
 connect_to_db()
 app = FastAPI()
+
+origins = [
+    "https://neupokoev.xyz",
+    "http://localhost",
+    "http://localhost:8000",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/likes")
