@@ -1,9 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
-from io import BytesIO
 import json
 import os
-import time
 import pymongo
 from pymongo import ReturnDocument
 
