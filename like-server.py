@@ -7,25 +7,31 @@ import time
 import pymongo
 from pymongo import ReturnDocument
 
-hostName = ""
-serverPort = int(os.environ.get('PORT', 10000))
 
-db_user = os.environ.get("DB_USER")
-db_pass = os.environ.get("DB_PASSWORD")
-db_name = os.environ.get("DB_NAME")
-client = pymongo.MongoClient(f"mongodb+srv://{db_user}:{db_pass}@mikolasanwebsite.afnov.mongodb.net/{db_name}?retryWrites=true&w=majority")
-db = client[db_name]
-votes = db["votes"]
+votes = None
 votes_cache = {}
 
-# https://pythonbasics.org/webserver/
-# https://gist.github.com/roughy/157036bed7d4ead34113
+
+def connect_to_db():
+    db_user = os.environ.get("DB_USER")
+    db_pass = os.environ.get("DB_PASSWORD")
+    db_name = os.environ.get("DB_NAME")
+    print("Connecting to DB...", db_user, db_pass, db_name)
+    client = pymongo.MongoClient(f"mongodb+srv://{db_user}:{db_pass}@mikolasanwebsite.afnov.mongodb.net/{db_name}?retryWrites=true&w=majority")
+    db = client[db_name]
+    print("Getting 'votes'")
+    global votes
+    votes = db["votes"]
 
 
 def trim_ending_slash(url):
     if len(url) > 0 and url[-1] == '/':
         return url[:-1]
     return url
+
+
+# https://pythonbasics.org/webserver/
+# https://gist.github.com/roughy/157036bed7d4ead34113
 
 
 class LikeServer(BaseHTTPRequestHandler):
@@ -120,6 +126,9 @@ class LikeServer(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    connect_to_db()
+    hostName = "0.0.0.0"
+    serverPort = int(os.environ.get('PORT', 10000))
     webServer = HTTPServer((hostName, serverPort), LikeServer)
     print("Server started http://%s:%s" % (hostName, serverPort))
 

@@ -1,6 +1,17 @@
 # Like Server
 
-Run server with
+## Prep work
+
+PowerShell
+
+```
+$Env:DB_USER = "user"
+$Env:DB_PASSWORD = "pass"
+$Env:DB_NAME = "db"
+```
+
+
+## Run server
 
 ```
 python3 like-server.py
