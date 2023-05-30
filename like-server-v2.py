@@ -45,18 +45,18 @@ app.add_middleware(
 )
 
 
-@app.get("/likes")
+@app.get("/reactions")
 def read_likes(url: str):
     url = trim_ending_slash(url)
     cursor = votes.find({ "path": url })
-    scores = {x['vote']: x['score'] for x in cursor.clone()}
-    if len(scores) > 0:
+    reactions = {x['vote']: x['score'] for x in cursor.clone()}
+    if len(reactions) > 0:
         global votes_cache
         if url not in votes_cache:
             votes_cache[url] = {x['vote']: x['_id'] for x in cursor.clone()}
         
         return {
-            "scores": scores
+            "reactions": reactions
         }
     
     return {}
@@ -67,7 +67,7 @@ class Like(BaseModel):
     like: str
 
 
-@app.post("/like", status_code=201)
+@app.post("/react", status_code=201)
 def like_url(body: Like):
     url = body.url
     vote_name = body.like
@@ -99,8 +99,8 @@ def like_url(body: Like):
     print(vote_name, score)
     
     return {
-        "scoreName": vote_name,
-        "score": score
+        "reactionName": vote_name,
+        "reaction": score
     }
 
 
