@@ -64,13 +64,13 @@ def read_likes(url: str):
 
 class Like(BaseModel):
     url: str
-    like: str
+    reaction: str
 
 
 @app.post("/react", status_code=201)
 def like_url(body: Like):
     url = body.url
-    vote_name = body.like
+    vote_name = body.reaction
     score = 0
     global votes_cache
     if url not in votes_cache:
